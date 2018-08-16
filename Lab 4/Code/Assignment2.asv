@@ -1,0 +1,76 @@
+%Assignment2.m
+%This module applies an FIR filter and an I
+%Authors: Irina Golub, Kalvin Hallesy, Chenglong Li
+
+clear all; close all;
+
+%Load and plot stock info from .txt file
+stockInfo = importdata('microsoft_stock.txt');
+
+[musicRead, Fs] = audioread('music.wav');
+music = musicRead(:,1) + musicRead(:,2);
+
+%FIR low-pass filter with order 10, cutoff frequency of .3pi
+FIRcoefficients = fir1(10,.3*pi);
+frevalz01(FIRcoefficients,1);
+
+%IIR low-pass Butterworth filter with order 10 and cut-off frequency of
+%.3pi
+[IIRb, IIRa] = butter(10,.3*pi);
+figure;
+frevalz01(IIRb, IIRa);
+
+x = [ones(1,19),zeros(1,40)];
+
+FIRstock = filter(FIRcoefficients, 1, stockInfo);
+IIRstock = filter(IIRb, IIRa, stockInfo);
+FIRx = filter(FIRcoefficients, 1, x);
+IIRx = filter(IIRb, IIRa, x);
+FIRmusic = filter(FIRcoefficients, 1, music);
+IIRmusic = filter(IIRb, IIRa, music);
+
+figure; subplot(311); plot(stockInfo);
+xlabel('Days');
+ylabel('Stock Price');
+title('Unfiltered Stock Price Info');
+subplot(312); plot(FIRstock);
+xlabel('Days');
+ylabel('Stock Price');
+ylim([15 35]);
+title('FIR filtered Stock Price Info');
+subplot(313); plot(IIRstock);
+xlabel('Days');
+ylabel('Stock Price');
+title('IIR filtered Stock Price Info');
+
+figure; subplot(311); stem(x);
+xlabel('n');
+ylim([0 1.5]);
+title('Unfiltered x[n]');
+subplot(312); stem(FIRx);
+xlabel('n');
+ylim([0 1.5]);
+title('FIR filtered x[n]');
+subplot(313); stem(IIRx);
+xlabel('n');
+ylim([0 1.5]);
+title('IIR filtered x[n]');
+
+size(music)
+figure; subplot(311); plot(music);
+xlabel('n');
+title('Unfiltered Music Vector');
+subplot(312); plot(FIRmusic);
+xlabel('n');
+title('FIR Filtered Music Vector');
+subplot(313); plot(IIRmusic);
+xlabel('n');
+title('IIR Filtered Music Vector');
+
+%Can't hear any difference when you filter it. why?
+% soundsc(music, Fs);
+% pause(21);
+% soundsc(FIRmusic, Fs);
+% pause(21);
+% soundsc(IIRmusic, Fs);
+

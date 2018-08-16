@@ -1,0 +1,38 @@
+%EE341 Lab 1
+
+oneBeat = 4000;             %Duration of one quarter note = 4000 samples
+halfNote = 2*oneBeat;
+wholeNote = 4*oneBeat;
+Afreq = 220;
+Efreq = 220 * (2^(7/12));
+Bfreq = 220 * (2^(2/12));
+Cfreq = 220 * (2^(3/12));
+
+samplingrate = 8000;
+frequency = [Afreq,Afreq,Efreq,Efreq,Efreq,Bfreq,Cfreq,Bfreq,Afreq]; 
+%low A, A, E, E, E, B, C, B, A
+duration = [halfNote, oneBeat, oneBeat, oneBeat, oneBeat, oneBeat, oneBeat, oneBeat, wholeNote];
+%Each quarter note is 4000 samples
+
+thisnote0 = generateNote(frequency(1),duration(1),samplingrate);
+thisnote = ADSR(thisnote0);
+songArray = [thisnote]; % start with an empty song
+for i = 2:9
+    thisnote0 = generateNote(frequency(i),duration(i),samplingrate);
+    thisnote = ADSR(thisnote0);
+    overlapVectorEnd = zeros(1, length(thisnote) - 800);
+    overlapVectorBegin = zeros(1, length(songArray) - 400);
+    
+    i
+    length([songArray, overlapVectorEnd])
+    length([overlapVectorBegin, thisnote])
+    
+    %sound([songArray, overlapVectorEnd], samplingrate);
+    %sound([overlapVectorBegin, thisnote], samplingrate);
+    songArray = [songArray, overlapVectorEnd] + [overlapVectorBegin, thisnote];
+    %songArray = [songArray, thisnote]; % concatenate this note and a rest to the song
+end
+
+plot([0:length(songArray)-1],songArray);
+
+sound(songArray, samplingrate);

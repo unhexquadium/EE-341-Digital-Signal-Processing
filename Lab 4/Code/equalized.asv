@@ -1,0 +1,5 @@
+
+function equalized = filter(G1, G2, G3)
+%G1 is low-frequency gain in dB
+%G2 is central-frequency gain in dB
+%G3 is high-frequenc
